@@ -9,7 +9,8 @@
     "lint": "next lint",
     "build:svelte": "vite build --config svelte-widget/vite.config.mjs",
     "pages:build": "npm run build:svelte && npx @cloudflare/next-on-pages",
-    "pages:preview": "wrangler pages dev .vercel/output/static --compatibility-date=2026-04-19"
+    "pages:preview": "wrangler pages dev .vercel/output/static --compatibility-date=2026-04-19",
+    "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static --project-name adcdtjs"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.5.1",
