@@ -148,6 +148,18 @@ export default function CertificateBuilder() {
           </a>
           에서 소스 코드를 확인하실 수 있습니다.
         </p>
+        <p className="mt-2">
+          개발자에게 후원은 엄청 큰 도움이 됩니다. 프로젝트가 즐거우셨다면{" "}
+          <a
+            href="https://github.com/sponsors/zeroday0619"
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold text-secondary underline underline-offset-4 transition-opacity hover:opacity-80"
+          >
+            GitHub Sponsors
+          </a>
+          를 통해 응원해 주세요.
+        </p>
       </footer>
     </div>
   );
