@@ -166,8 +166,8 @@ export function getRecommendation(score: number): string {
   return "Periodic observation and comfort food intervention may reduce symptoms.";
 }
 
-export function formatAddressForPdf(address: string): string {
-  const singleLineAddress = address
+function wrapTextForPdf(text: string, maxLineLength: number, fallback: string): string {
+  const singleLineText = text
     .replace(/\r\n/g, "\n")
     .replace(/\r/g, "\n")
     .split("\n")
@@ -177,19 +177,37 @@ export function formatAddressForPdf(address: string): string {
     .replace(/\s+/g, " ")
     .trim();
 
-  if (!singleLineAddress) {
-    return "-";
+  if (!singleLineText) {
+    return fallback;
   }
 
-  return singleLineAddress
-    .split(" ")
-    .map((segment) =>
-      segment
-        .replace(/([,./\-()#])/g, "$1\u200B")
-        .replace(/([a-z])([A-Z])/g, "$1\u200B$2")
-        .replace(/(\d)([A-Za-z])/g, "$1\u200B$2")
-        .replace(/([A-Za-z])(\d)/g, "$1\u200B$2")
-        .replace(/(.{8})/g, "$1\u200B"),
-    )
-    .join(" ");
+  const words = singleLineText.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let currentLine = "";
+
+  for (const word of words) {
+    const nextLine = currentLine ? `${currentLine} ${word}` : word;
+
+    if (currentLine && nextLine.length > maxLineLength) {
+      lines.push(currentLine);
+      currentLine = word;
+      continue;
+    }
+
+    currentLine = nextLine;
+  }
+
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+
+  return lines.join("\n");
+}
+
+export function formatAddressForPdf(address: string): string {
+  return wrapTextForPdf(address, 42, "-");
+}
+
+export function formatClinicalNotesForPdf(note: string): string {
+  return wrapTextForPdf(note, 62, "-");
 }

@@ -18,6 +18,7 @@ import { CERTIFICATE_LEVEL_LABELS, GENDER_LABELS } from "@/lib/certificate/domai
 import {
   buildVerificationCode,
   formatAddressForPdf,
+  formatClinicalNotesForPdf,
   getRecommendation,
 } from "@/lib/certificate/domain/formatters";
 import type { CertificatePrintData } from "@/lib/certificate/domain/types";
@@ -50,6 +51,7 @@ const styles = StyleSheet.create({
   },
   sheet: {
     position: "relative",
+    flexGrow: 1,
     borderWidth: 3,
     borderColor: "#4b2713",
     paddingTop: 30,
@@ -67,6 +69,11 @@ const styles = StyleSheet.create({
   },
   sheetContent: {
     position: "relative",
+    flexGrow: 1,
+    flexDirection: "column",
+  },
+  mainContent: {
+    flexDirection: "column",
   },
   topRow: {
     flexDirection: "row",
@@ -148,12 +155,12 @@ const styles = StyleSheet.create({
   labelCell: {
     width: 160,
     flexShrink: 0,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     backgroundColor: "rgba(120, 80, 43, 0.1)",
     borderRightWidth: 1,
     borderRightColor: "rgba(63, 34, 20, 0.22)",
-    paddingTop: 9,
-    paddingBottom: 9,
+    paddingTop: 6,
+    paddingBottom: 6,
     paddingLeft: 12,
     paddingRight: 12,
   },
@@ -163,31 +170,34 @@ const styles = StyleSheet.create({
   labelText: {
     fontWeight: "bold",
     lineHeight: 1.3,
+    textAlign: "left",
   },
   valueCell: {
     flexGrow: 1,
     flexShrink: 1,
     flexBasis: 0,
     minWidth: 0,
-    justifyContent: "center",
-    paddingTop: 9,
-    paddingBottom: 9,
+    justifyContent: "flex-start",
+    paddingTop: 6,
+    paddingBottom: 6,
     paddingLeft: 12,
     paddingRight: 12,
   },
   valueCellMultiline: {
     justifyContent: "flex-start",
-    paddingTop: 9,
-    paddingBottom: 9,
+    paddingTop: 6,
+    paddingBottom: 6,
   },
   valueText: {
-    lineHeight: 1.3,
+    lineHeight: 1.2,
     maxWidth: "100%",
+    textAlign: "left",
   },
   valueTextMultiline: {
-    lineHeight: 1.3,
+    lineHeight: 1.2,
     maxWidth: "100%",
     fontSize: 10,
+    textAlign: "left",
   },
   diagnosis: {
     marginTop: 26,
@@ -215,7 +225,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   footer: {
-    marginTop: 32,
+    marginTop: "auto",
+    paddingTop: 24,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
@@ -253,10 +264,11 @@ function InfoRow({
   isLast?: boolean;
   multiline?: boolean;
 }) {
+  const isVariableHeight = multiline || value.includes("\n");
   const rowStyle =
-    multiline && isLast
+    isVariableHeight && isLast
       ? [styles.row, styles.rowMultiline, styles.rowLast]
-      : multiline
+      : isVariableHeight
         ? [styles.row, styles.rowMultiline]
         : isLast
           ? [styles.row, styles.rowLast]
@@ -264,13 +276,13 @@ function InfoRow({
 
   return (
     <View style={rowStyle}>
-      <View style={multiline ? [styles.labelCell, styles.labelCellMultiline] : styles.labelCell}>
+      <View style={isVariableHeight ? [styles.labelCell, styles.labelCellMultiline] : styles.labelCell}>
         <Text style={styles.labelText}>{label}</Text>
       </View>
-      <View style={multiline ? [styles.valueCell, styles.valueCellMultiline] : styles.valueCell}>
+      <View style={isVariableHeight ? [styles.valueCell, styles.valueCellMultiline] : styles.valueCell}>
         <Text
           wrap
-          style={multiline ? [styles.valueText, styles.valueTextMultiline] : styles.valueText}
+          style={isVariableHeight ? [styles.valueText, styles.valueTextMultiline] : styles.valueText}
         >
           {value}
         </Text>
@@ -508,6 +520,7 @@ function CertificatePrintDocument({ data }: { data: CertificatePrintData }) {
   const sexText = GENDER_LABELS[data.sex] ?? "Prefer not to say";
   const recommendation = getRecommendation(data.score);
   const wrappedAddress = formatAddressForPdf(data.address);
+  const wrappedNote = formatClinicalNotesForPdf(data.note);
   const verificationCode = buildVerificationCode(data.issuedUnix, data.serial);
 
   return (
@@ -517,35 +530,37 @@ function CertificatePrintDocument({ data }: { data: CertificatePrintData }) {
           <WatermarkLogo verificationCode={verificationCode} />
 
           <View style={styles.sheetContent}>
-            <View style={styles.topRow}>
-              <View style={styles.titleBlock}>
-                <Text style={styles.kicker}>MEDICAL CERTIFICATE</Text>
-                <View style={styles.kickerRule} />
-                <View style={styles.titleStack}>
-                  <Text style={styles.titlePrimary}>Acute Episode of Japan</Text>
-                  <Text style={styles.titlePrimary}>Ikitai Syndrome</Text>
+            <View style={styles.mainContent}>
+              <View style={styles.topRow}>
+                <View style={styles.titleBlock}>
+                  <Text style={styles.kicker}>MEDICAL CERTIFICATE</Text>
+                  <View style={styles.kickerRule} />
+                  <View style={styles.titleStack}>
+                    <Text style={styles.titlePrimary}>Acute Episode of Japan</Text>
+                    <Text style={styles.titlePrimary}>Ikitai Syndrome</Text>
+                  </View>
+                </View>
+
+                <View style={styles.statusWrap}>
+                  <Text style={styles.statusLabel}>STATUS</Text>
+                  <Text style={styles.statusValue}>{levelText}</Text>
                 </View>
               </View>
 
-              <View style={styles.statusWrap}>
-                <Text style={styles.statusLabel}>STATUS</Text>
-                <Text style={styles.statusValue}>{levelText}</Text>
+              <View style={styles.table}>
+                <InfoRow label="Patient Name" value={data.patient} />
+                <InfoRow label="Date of Birth" value={data.birth} />
+                <InfoRow label="Gender Identity" value={sexText} />
+                <InfoRow label="Address" value={wrappedAddress} multiline />
+                <InfoRow label="Japan Ikitai Score" value={scoreText} />
+                <InfoRow label="Certificate ID" value={data.serial} isLast />
               </View>
-            </View>
 
-            <View style={styles.table}>
-              <InfoRow label="Patient Name" value={data.patient} />
-              <InfoRow label="Date of Birth" value={data.birth} />
-              <InfoRow label="Gender Identity" value={sexText} />
-              <InfoRow label="Address" value={wrappedAddress} multiline />
-              <InfoRow label="Japan Ikitai Score" value={scoreText} />
-              <InfoRow label="Certificate ID" value={data.serial} isLast />
-            </View>
-
-            <View style={styles.diagnosis}>
-              <Text style={styles.diagnosisTitle}>Clinical Notes</Text>
-              <Text style={styles.diagnosisBody}>{data.note}</Text>
-              <Text style={styles.recommend}>Recommendation: {recommendation}</Text>
+              <View style={styles.diagnosis}>
+                <Text style={styles.diagnosisTitle}>Clinical Notes</Text>
+                <Text style={styles.diagnosisBody}>{wrappedNote}</Text>
+                <Text style={styles.recommend}>Recommendation: {recommendation}</Text>
+              </View>
             </View>
 
             <View style={styles.footer}>
