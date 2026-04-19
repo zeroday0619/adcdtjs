@@ -1,19 +1,19 @@
 # Medical Certificate Issuance System for Acute Episode of Japan Ikitai Syndrome
 
-This is a parody medical-certificate web app built with Next.js + React + daisyUI + Cloudflare Pages.
+This is a parody medical-certificate web app built with Next.js + React + daisyUI + Cloudflare Workers via OpenNext.
 
 ## Features
 
 - Fill out patient details and notes in an input form
 - Live PDF-based certificate preview
 - Print-ready A4 certificate output from the browser
-- Build scripts included for Cloudflare Pages deployment
+- Build scripts included for Cloudflare Workers deployment
 
 ## Tech Stack
 
 - Next.js (App Router)
 - Tailwind CSS + daisyUI
-- Cloudflare Pages (`@cloudflare/next-on-pages`)
+- Cloudflare Workers (`@opennextjs/cloudflare`)
 
 ## Local Development
 
@@ -29,24 +29,24 @@ npm run build
 npm run start
 ```
 
-## Cloudflare Pages
+## Cloudflare Workers (OpenNext)
 
 1. Build command
 
 ```bash
-npm run pages:build
+npm run preview
 ```
 
 2. Build output directory
 
 ```txt
-.vercel/output/static
+.open-next/
 ```
 
-3. Test Pages output locally
+3. Deploy to Cloudflare Workers
 
 ```bash
-npm run pages:preview
+npm run deploy
 ```
 
 ## Disclaimer

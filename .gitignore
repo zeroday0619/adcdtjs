@@ -186,4 +186,5 @@ dist
 # Cloudflare Pages / Wrangler
 .wrangler/
 .dev.vars
-.vercel/output/
+.open-next/
+cloudflare-env.d.ts
