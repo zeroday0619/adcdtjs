@@ -21,7 +21,6 @@ export type CertificateFormState = {
   level: CertificateLevel;
   score: number;
   note: string;
-  issuedDate: string;
 };
 
 export type CertificatePrintData = {

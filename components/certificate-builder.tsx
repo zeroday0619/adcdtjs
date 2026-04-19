@@ -31,8 +31,8 @@ export default function CertificateBuilder() {
   const previewUrlRef = useRef<string | null>(null);
 
   const previewPrintData = useMemo(
-    () => buildCertificatePrintData(state.form, state.certificateId),
-    [state.form, state.certificateId],
+    () => buildCertificatePrintData(state.form, state.certificateId, state.issuedAt),
+    [state.form, state.certificateId, state.issuedAt],
   );
 
   useEffect(() => {
@@ -87,6 +87,7 @@ export default function CertificateBuilder() {
     dispatch({
       type: "certificate/issue",
       certificateId: certificateService.generateCertificateId(),
+      issuedAt: Date.now(),
     });
   }
 

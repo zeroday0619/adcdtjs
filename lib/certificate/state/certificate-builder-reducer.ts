@@ -4,6 +4,7 @@ import type { CertificateFormState } from "@/lib/certificate/domain/types";
 export type CertificateBuilderState = {
   form: CertificateFormState;
   certificateId: string;
+  issuedAt: number;
   isIssued: boolean;
   isPreviewRendering: boolean;
   isPrinting: boolean;
@@ -12,7 +13,7 @@ export type CertificateBuilderState = {
 
 export type CertificateBuilderAction =
   | { type: "field/update"; key: keyof CertificateFormState; value: CertificateFormState[keyof CertificateFormState] }
-  | { type: "certificate/issue"; certificateId: string }
+  | { type: "certificate/issue"; certificateId: string; issuedAt: number }
   | { type: "preview/render-start" }
   | { type: "preview/render-success"; url: string | null }
   | { type: "preview/render-finish" }
@@ -25,6 +26,7 @@ export function createInitialCertificateBuilderState(
   return {
     form: CERTIFICATE_DEFAULTS.form,
     certificateId,
+    issuedAt: Date.now(),
     isIssued: false,
     isPreviewRendering: true,
     isPrinting: false,
@@ -49,6 +51,7 @@ export function certificateBuilderReducer(
       return {
         ...state,
         certificateId: action.certificateId,
+        issuedAt: action.issuedAt,
         isIssued: true,
       };
     case "preview/render-start":

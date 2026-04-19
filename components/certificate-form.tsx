@@ -114,16 +114,6 @@ export function CertificateForm({
         />
       </label>
 
-      <label className="form-control gap-2">
-        <span className="label-text font-medium">Issue Date</span>
-        <input
-          type="date"
-          className="input input-bordered bg-base-100"
-          value={form.issuedDate}
-          onChange={(event) => onFieldChange("issuedDate", event.target.value)}
-        />
-      </label>
-
       <div className="mt-2 flex gap-2">
         <button type="submit" className="btn btn-primary flex-1">
           Issue Certificate

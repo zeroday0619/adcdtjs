@@ -15,7 +15,6 @@ export const CERTIFICATE_DEFAULTS: CertificateDefaults = {
     level: "severe",
     score: 86,
     note: "Immediate attempts to book flights to Japan were observed when spring fare promotions appeared.",
-    issuedDate: new Date().toISOString().slice(0, 10),
   },
 };
 

@@ -1,10 +1,11 @@
 import { CERTIFICATE_DEFAULTS } from "@/lib/certificate/domain/constants";
-import { toDisplayDate } from "@/lib/certificate/domain/formatters";
+import { formatIssuedAt } from "@/lib/certificate/domain/formatters";
 import type { CertificateFormState, CertificatePrintData } from "@/lib/certificate/domain/types";
 
 export function buildCertificatePrintData(
   form: CertificateFormState,
   certificateId: string,
+  issuedAt: number,
 ): CertificatePrintData {
   return {
     patient: form.patientName || CERTIFICATE_DEFAULTS.patientName,
@@ -16,7 +17,7 @@ export function buildCertificatePrintData(
     level: form.level,
     score: form.score,
     note: form.note,
-    issued: toDisplayDate(form.issuedDate),
+    issued: formatIssuedAt(issuedAt),
     serial: certificateId,
   };
 }
