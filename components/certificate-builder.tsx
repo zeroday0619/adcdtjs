@@ -31,8 +31,8 @@ export default function CertificateBuilder() {
   const previewUrlRef = useRef<string | null>(null);
 
   const previewPrintData = useMemo(
-    () => buildCertificatePrintData(state.form, state.certificateId, state.issuedAt),
-    [state.form, state.certificateId, state.issuedAt],
+    () => buildCertificatePrintData(state.form, state.certificateId, state.issuedAt, state.sampleAddress),
+    [state.form, state.certificateId, state.issuedAt, state.sampleAddress],
   );
 
   useEffect(() => {
@@ -122,6 +122,7 @@ export default function CertificateBuilder() {
       <div className="grid gap-5 lg:grid-cols-[340px_minmax(0,1fr)]">
         <CertificateForm
           form={state.form}
+          addressPlaceholder={state.sampleAddress}
           isIssued={state.isIssued}
           isPrinting={state.isPrinting}
           onSubmit={handleIssue}

@@ -1,8 +1,9 @@
-import { CERTIFICATE_DEFAULTS } from "@/lib/certificate/domain/constants";
+import { CERTIFICATE_DEFAULTS, pickRandomSampleAddress } from "@/lib/certificate/domain/constants";
 import type { CertificateFormState } from "@/lib/certificate/domain/types";
 
 export type CertificateBuilderState = {
   form: CertificateFormState;
+  sampleAddress: string;
   certificateId: string;
   issuedAt: number;
   isIssued: boolean;
@@ -25,6 +26,7 @@ export function createInitialCertificateBuilderState(
 ): CertificateBuilderState {
   return {
     form: CERTIFICATE_DEFAULTS.form,
+    sampleAddress: pickRandomSampleAddress(),
     certificateId,
     issuedAt: Date.now(),
     isIssued: false,

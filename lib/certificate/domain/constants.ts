@@ -24,6 +24,22 @@ export const CERTIFICATE_DEFAULTS: CertificateDefaults = {
   },
 };
 
+export const SAMPLE_ADDRESSES = [
+  "301, CiRCLE Plaza, 12 Marina-ro, Live-gu, Seoul, Republic of Korea",
+  "908, RiNG Tower, 69 Rinko-daero, Beat-gu, Seoul, Republic of Korea",
+  "101, SPACE Annex, 3 Shifune-ro, Oldtown-gu, Seoul, Republic of Korea",
+  "503, Hanasakigawa Heights, 27 Kasumi-ro, Byeolbit-gu, Seoul, Republic of Korea",
+  "1305, Ave Mujica Hall, 66 Oblivionis-daero, Gekkou-gu, Seoul, Republic of Korea",
+  "1204, Roselia Manor, 13 Yukina-daero, Arian-gu, Seoul, Republic of Korea",
+  "302, MyGO!!!!! House, 5 Tomori-ro, Mayoi-gu, Seoul, Republic of Korea",
+  "702, Haneoka Terrace, 18 Ran-ro, Noeul-gu, Seoul, Republic of Korea",
+] as const;
+
+export function pickRandomSampleAddress(): string {
+  const randomIndex = Math.floor(Math.random() * SAMPLE_ADDRESSES.length);
+  return SAMPLE_ADDRESSES[randomIndex] ?? CERTIFICATE_DEFAULTS.address;
+}
+
 export const CERTIFICATE_LEVEL_LABELS: Record<CertificateLevel, string> = {
   mild: "MILD",
   moderate: "MODERATE",

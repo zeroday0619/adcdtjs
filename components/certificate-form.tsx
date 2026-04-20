@@ -7,6 +7,7 @@ import type { CertificateFormState } from "@/lib/certificate/domain/types";
 
 export function CertificateForm({
   form,
+  addressPlaceholder,
   isIssued,
   isPrinting,
   onSubmit,
@@ -14,6 +15,7 @@ export function CertificateForm({
   onFieldChange,
 }: {
   form: CertificateFormState;
+  addressPlaceholder: string;
   isIssued: boolean;
   isPrinting: boolean;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -85,7 +87,7 @@ export function CertificateForm({
         <span className="label-text font-medium">Address</span>
         <textarea
           className="textarea textarea-bordered h-20 bg-base-100 overflow-x-hidden [text-wrap:wrap] break-words"
-          placeholder="e.g., 503, Hanasakigawa Heights, 27 Kasumi-ro, Byeolbit-gu, Seoul, Republic of Korea"
+          placeholder={`e.g., ${addressPlaceholder}`}
           value={form.address}
           onChange={(event) => onFieldChange("address", event.target.value)}
         />
