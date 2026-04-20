@@ -19,6 +19,8 @@ export function CertificateBuilderShell({
   onIssue: (event: FormEvent<HTMLFormElement>) => void;
   onPrint: () => void;
 }) {
+  const currentYear = new Date().getFullYear();
+
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-6 print-frame md:px-8 md:py-8">
       <header className="no-print rounded-box border border-base-300/70 bg-base-100/75 px-6 py-5 shadow-lg">
@@ -83,6 +85,21 @@ export function CertificateBuilderShell({
           </a>
           을 통해 응원해 주세요.
         </p>
+        <div className="mt-4 border-t border-base-300/70 pt-3 text-xs leading-6 text-neutral/70">
+          <p>Copyright (c) {currentYear} zeroday0619. All rights reserved.</p>
+          <p>
+            This project is distributed under the{" "}
+            <a
+              href="https://github.com/zeroday0619/AEJIS/blob/main/LICENSE"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-secondary underline underline-offset-4 transition-opacity hover:opacity-80"
+            >
+              Menhera Open Source License
+            </a>
+            .
+          </p>
+        </div>
       </footer>
     </div>
   );
