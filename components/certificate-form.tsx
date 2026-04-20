@@ -2,7 +2,7 @@
 
 import type { FormEvent } from "react";
 
-import { REDACTION_FIELD_LABELS } from "@/lib/certificate/domain/constants";
+import { getCertificateFormCatalog } from "@/lib/certificate/app/certificate-form-catalog";
 import type { CertificateFormState } from "@/lib/certificate/domain/types";
 
 export function CertificateForm({
@@ -36,24 +36,35 @@ export function CertificateForm({
     onFieldChange("redactedFields", nextRedactedFields);
   }
 
+  const formCatalog = getCertificateFormCatalog();
+  const nameField = formCatalog.getNameField();
+  const birthDateField = formCatalog.getBirthDateField();
+  const genderField = formCatalog.getGenderField();
+  const addressField = formCatalog.getAddressField(addressPlaceholder);
+  const severityField = formCatalog.getSeverityField();
+  const scoreField = formCatalog.getScoreField();
+  const noteField = formCatalog.getNoteField();
+  const redactionFields = formCatalog.getRedactionFields();
+  const redactionHelpText = formCatalog.getRedactionHelpText();
+
   return (
     <form
       onSubmit={onSubmit}
       className="no-print form-glass rounded-box flex flex-col gap-4 border p-5 shadow-lg"
     >
       <label className="form-control gap-2">
-        <span className="label-text font-medium">Patient Name</span>
+        <span className="label-text font-medium">{nameField.label}</span>
         <input
           className="input input-bordered bg-base-100"
-          placeholder="e.g., Choe Gu-sung"
+          placeholder={nameField.placeholder}
           value={form.patientName}
           onChange={(event) => onFieldChange("patientName", event.target.value)}
-          required
+          required={nameField.required}
         />
       </label>
 
       <label className="form-control gap-2">
-        <span className="label-text font-medium">Date of Birth</span>
+        <span className="label-text font-medium">{birthDateField.label}</span>
         <input
           type="date"
           className="input input-bordered bg-base-100"
@@ -63,31 +74,25 @@ export function CertificateForm({
       </label>
 
       <label className="form-control gap-2">
-        <span className="label-text font-medium">Gender Identity</span>
+        <span className="label-text font-medium">{genderField.label}</span>
         <select
           className="select select-bordered bg-base-100"
           value={form.sex}
           onChange={(event) => onFieldChange("sex", event.target.value as CertificateFormState["sex"])}
         >
-          <option value="female">Female</option>
-          <option value="male">Male</option>
-          <option value="non_binary">Non-binary</option>
-          <option value="genderfluid">Genderfluid</option>
-          <option value="genderqueer">Genderqueer</option>
-          <option value="agender">Agender</option>
-          <option value="intersex">Intersex</option>
-          <option value="two_spirit">Two-Spirit</option>
-          <option value="questioning">Questioning</option>
-          <option value="prefer_not_to_say">Prefer not to say</option>
-          <option value="other">Other</option>
+          {genderField.options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
       </label>
 
       <label className="form-control gap-2">
-        <span className="label-text font-medium">Address</span>
+        <span className="label-text font-medium">{addressField.label}</span>
         <textarea
           className="textarea textarea-bordered h-20 bg-base-100 overflow-x-hidden [text-wrap:wrap] break-words"
-          placeholder={`e.g., ${addressPlaceholder}`}
+          placeholder={addressField.placeholder}
           value={form.address}
           onChange={(event) => onFieldChange("address", event.target.value)}
         />
@@ -96,57 +101,44 @@ export function CertificateForm({
       <fieldset className="form-control gap-2">
         <legend className="label-text font-medium">Redacted PDF Options</legend>
         <p className="text-sm text-base-content/70">
-          Select one or more fields to render as <span className="font-mono">[REDACTED]</span> in the PDF.
+          {redactionHelpText.prefix}
+          <span className="font-mono">{redactionHelpText.marker}</span>
+          {redactionHelpText.suffix}
         </p>
-        <label className="label flex w-full cursor-pointer justify-start gap-3 py-1">
-          <input
-            type="checkbox"
-            className="checkbox checkbox-sm"
-            checked={form.redactedFields.includes("birthDate")}
-            onChange={(event) => handleRedactionToggle("birthDate", event.target.checked)}
-          />
-          <span className="label-text">{REDACTION_FIELD_LABELS.birthDate}</span>
-        </label>
-        <label className="label flex w-full cursor-pointer justify-start gap-3 py-1">
-          <input
-            type="checkbox"
-            className="checkbox checkbox-sm"
-            checked={form.redactedFields.includes("sex")}
-            onChange={(event) => handleRedactionToggle("sex", event.target.checked)}
-          />
-          <span className="label-text">{REDACTION_FIELD_LABELS.sex}</span>
-        </label>
-        <label className="label flex w-full cursor-pointer justify-start gap-3 py-1">
-          <input
-            type="checkbox"
-            className="checkbox checkbox-sm"
-            checked={form.redactedFields.includes("address")}
-            onChange={(event) => handleRedactionToggle("address", event.target.checked)}
-          />
-          <span className="label-text">{REDACTION_FIELD_LABELS.address}</span>
-        </label>
+        {redactionFields.map((field) => (
+          <label key={field.key} className="label flex w-full cursor-pointer justify-start gap-3 py-1">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-sm"
+              checked={form.redactedFields.includes(field.key)}
+              onChange={(event) => handleRedactionToggle(field.key, event.target.checked)}
+            />
+            <span className="label-text">{field.label}</span>
+          </label>
+        ))}
       </fieldset>
 
       <label className="form-control gap-2">
-        <span className="label-text font-medium">Severity</span>
+        <span className="label-text font-medium">{severityField.label}</span>
         <select
           className="select select-bordered bg-base-100"
           value={form.level}
           onChange={(event) => onFieldChange("level", event.target.value as CertificateFormState["level"])}
         >
-          <option value="mild">Mild - occasional urge</option>
-          <option value="moderate">Moderate - manageable but persistent</option>
-          <option value="severe">Severe - instant flight-search behavior</option>
-          <option value="critical">Critical - already heading to the airport</option>
+          {severityField.options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
         </select>
       </label>
 
       <label className="form-control gap-2">
-        <span className="label-text font-medium">Japan Ikitai Score: {form.score}</span>
+        <span className="label-text font-medium">{scoreField.label}: {form.score}</span>
         <input
           type="range"
-          min={0}
-          max={100}
+          min={scoreField.min}
+          max={scoreField.max}
           className="range range-primary"
           value={form.score}
           onChange={(event) => onFieldChange("score", Number(event.target.value))}
@@ -154,7 +146,7 @@ export function CertificateForm({
       </label>
 
       <label className="form-control gap-2">
-        <span className="label-text font-medium">Clinical Notes</span>
+        <span className="label-text font-medium">{noteField.label}</span>
         <textarea
           className="textarea textarea-bordered h-28 bg-base-100 overflow-x-hidden [text-wrap:wrap] break-words"
           value={form.note}

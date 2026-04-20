@@ -16,12 +16,31 @@ This is a parody medical-certificate web app built with Next.js + React + daisyU
 - Tailwind CSS + daisyUI
 - Cloudflare Workers (`@opennextjs/cloudflare`)
 
+## Architecture
+
+Project structure and design notes are documented in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
 ## Local Development
 
 ```bash
 npm install
 npm run dev
 ```
+
+## SEO Configuration
+
+Set the production site origin before deploying so canonical URLs and crawler metadata resolve correctly:
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://your-domain.example
+```
+
+This value is used for:
+
+- canonical metadata
+- Open Graph and Twitter metadata
+- `robots.txt`
+- `sitemap.xml`
 
 ## Production Build
 
@@ -57,7 +76,6 @@ This project is a parody sample for humor and fun. It must not be used as a real
 ## License
 
 [Menhera Open Source License](LICENSE)
-
 
 ## AI-Generated Code Notice
 
